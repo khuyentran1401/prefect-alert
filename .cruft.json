@@ -1,0 +1,20 @@
+{
+  "template": "https://github.com/PrefectHQ/prefect-collection-template",
+  "commit": "0e8699ab7eed64757049cfd2f753dbe5870f0835",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "full_name": "Khuyen Tran",
+      "email": "khuyentran1476@gmail.com",
+      "github_organization": "khuyentran1401",
+      "collection_name": "prefect-alert",
+      "collection_slug": "prefect_alert",
+      "collection_short_description": "Decorator to send alert when a Prefect task or flow fails",
+      "_copy_without_render": [
+        ".github/workflows/*.yml"
+      ],
+      "_template": "https://github.com/PrefectHQ/prefect-collection-template"
+    }
+  },
+  "directory": null
+}
