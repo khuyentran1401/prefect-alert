@@ -18,13 +18,17 @@
 
 ## Welcome!
 
-Decorator to send alert when a Prefect task or flow fails
+[Prefect](https://www.prefect.io/) is an open-source library that allows you to orchestrate and observe your dataflow defined in Python.
+
+prefect-alert is a decorator that allows you to send alert when a Prefect task or flow fails.
+
+Read [this article](https://medium.com/the-prefect-blog/sending-slack-notifications-in-python-with-prefect-840a895f81c?sk=ab9bba5b59c8f3468bb01cabe04b2953) if you are not familiar with how to send notifications with Prefect. 
 
 ## Getting Started
 
 ### Python setup
 
-Requires an installation of Python 3.7+.
+Requires an installation of Python 3.8+.
 
 We recommend using a Python virtual environment manager such as pipenv, conda or virtualenv.
 
@@ -37,33 +41,82 @@ Install `prefect-alert` with `pip`:
 ```bash
 pip install prefect-alert
 ```
+### Create a notification block
+[Blocks](https://docs.prefect.io/concepts/blocks/) enable you to store configuration and provide an interface for interacting with external systems. 
 
-Then, register to [view the block](https://orion-docs.prefect.io/ui/blocks/) on Prefect Cloud:
-
-```bash
-prefect block register -m prefect_alert.credentials
-```
-
-Note, to use the `load` method on Blocks, you must already have a block document [saved through code](https://orion-docs.prefect.io/concepts/blocks/#saving-blocks) or [saved through the UI](https://orion-docs.prefect.io/ui/blocks/).
-
-### Write and run a flow
+First, start with creating a [notification block](https://docs.prefect.io/api-ref/prefect/blocks/notifications/) through [UI](https://docs.prefect.io/ui/blocks/) or a Python script:
 
 ```python
-from prefect import flow
-from prefect_alert.tasks import (
-    goodbye_prefect_alert,
-    hello_prefect_alert,
-)
+from prefect.blocks.notifications import SlackWebhook
 
+slack_block = SlackWebhook(url="https://hooks.slack.com/services/XXX/XXX/XXX")
+``` 
+### Send an alert
+Next, use the block created and the decorator `prefect_alert.alert_on_failure` to send alert when a flow/task fails.
+#### Send an alert when a flow fails
+
+```python
+from prefect import flow, task 
+from prefect.blocks.notifications import SlackWebhook
+from prefect_alert import alert_on_failure
+
+@task
+def may_fail():
+    raise ValueError()
+
+@alert_on_failure(block_type=SlackWebhook, block_name="test")
+@flow
+def failed_flow():
+    res = may_fail()
+    return res
+
+if __name__=="__main__":
+    failed_flow()
+```
+And you will see something like this on your Slack:
+![](img/slack-notification.png)
+#### Send an alert when a task fails
+
+```python
+from prefect import flow, task 
+from prefect.blocks.notifications import SlackWebhook
+from prefect_alert import alert_on_failure
+
+@alert_on_failure(block_type=SlackWebhook, block_name="test")
+@task
+def may_fail():
+    raise ValueError()
 
 @flow
-def example_flow():
-    hello_prefect_alert
-    goodbye_prefect_alert
+def failed_flow():
+    res = may_fail()
+    return res
 
-example_flow()
+if __name__=="__main__":
+    failed_flow()
 ```
 
+#### Send an alert when a asynchronous flow fails
+
+```python
+from prefect import flow, task 
+from prefect.blocks.notifications import SlackWebhook
+from prefect_alert import alert_on_failure
+import asyncio
+
+@alert_on_failure(block_type=SlackWebhook, block_name="test")
+@task
+async def may_fail():
+    raise ValueError()
+
+@flow
+async def failed_flow():
+    res = await may_fail()
+    return res
+
+if __name__=="__main__":
+    asyncio.run(failed_flow())
+```
 ## Resources
 
 If you encounter any bugs while using `prefect-alert`, feel free to open an issue in the [prefect-alert](https://github.com/khuyentran1401/prefect-alert) repository.
