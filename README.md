@@ -3,13 +3,6 @@
 <p align="center">
     <a href="https://pypi.python.org/pypi/prefect-alert/" alt="PyPI version">
         <img alt="PyPI" src="https://img.shields.io/pypi/v/prefect-alert?color=0052FF&labelColor=090422"></a>
-    <a href="https://github.com/khuyentran1401/prefect-alert/" alt="Stars">
-        <img src="https://img.shields.io/github/stars/khuyentran1401/prefect-alert?color=0052FF&labelColor=090422" /></a>
-    <a href="https://pepy.tech/badge/prefect-alert/" alt="Downloads">
-        <img src="https://img.shields.io/pypi/dm/prefect-alert?color=0052FF&labelColor=090422" /></a>
-    <a href="https://github.com/khuyentran1401/prefect-alert/pulse" alt="Activity">
-        <img src="https://img.shields.io/github/commit-activity/m/khuyentran1401/prefect-alert?color=0052FF&labelColor=090422" /></a>
-    <br>
     <a href="https://prefect-community.slack.com" alt="Slack">
         <img src="https://img.shields.io/badge/slack-join_community-red.svg?color=0052FF&labelColor=090422&logo=slack" /></a>
     <a href="https://discourse.prefect.io/" alt="Discourse">
