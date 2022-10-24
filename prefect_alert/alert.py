@@ -5,6 +5,8 @@ import prefect
 from prefect.blocks.notifications import AppriseNotificationBlock
 from prefect.utilities.asyncutils import is_async_fn
 
+from prefect_alert.utilities import _get_alert_message
+
 
 def alert_on_failure(block_type: AppriseNotificationBlock, block_name: str):
     """Decorator to send an alert when a task or a flow fails
@@ -46,13 +48,13 @@ def alert_on_failure(block_type: AppriseNotificationBlock, block_name: str):
                 """A wrapper of an async task/flow"""
                 return_state = kwargs.pop("return_state", None)
                 state: prefect.State = await flow(*args, return_state=True, **kwargs)
+
                 notification_block: AppriseNotificationBlock = await block_type.load(
                     block_name
                 )
                 if state.is_failed():
-                    await notification_block.notify(
-                        str(state), subject="Failed run ..."
-                    )
+                    message = _get_alert_message(state, flow)
+                    await notification_block.notify(message, subject="Flow failed...")
                 if return_state:
                     return state
                 else:
@@ -70,7 +72,8 @@ def alert_on_failure(block_type: AppriseNotificationBlock, block_name: str):
                     block_name
                 )
                 if state.is_failed():
-                    notification_block.notify(str(state), subject="Failed run ...")
+                    message = _get_alert_message(state, flow)
+                    notification_block.notify(message, subject="Flow failed...")
                 if return_state:
                     return state
                 else:
