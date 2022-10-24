@@ -1,6 +1,5 @@
 """Decorator to send an alert when a task or a flow fails"""
 from functools import wraps
-from typing import Union
 
 import prefect
 from prefect.blocks.notifications import AppriseNotificationBlock
@@ -39,16 +38,14 @@ def alert_on_failure(block_type: AppriseNotificationBlock, block_name: str):
 
     """
 
-    def decorator(flow_or_task: Union[prefect.Flow, prefect.Task]):
-        if is_async_fn(flow_or_task):
+    def decorator(flow):
+        if is_async_fn(flow):
 
-            @wraps(flow_or_task)
+            @wraps(flow)
             async def wrapper(*args, **kwargs):
                 """A wrapper of an async task/flow"""
                 return_state = kwargs.pop("return_state", None)
-                state: prefect.State = await flow_or_task(
-                    *args, return_state=True, **kwargs
-                )
+                state: prefect.State = await flow(*args, return_state=True, **kwargs)
                 notification_block: AppriseNotificationBlock = await block_type.load(
                     block_name
                 )
@@ -64,11 +61,11 @@ def alert_on_failure(block_type: AppriseNotificationBlock, block_name: str):
             return wrapper
         else:
 
-            @wraps(flow_or_task)
+            @wraps(flow)
             def wrapper(*args, **kwargs):
                 """A wrapper of a sync task/flow"""
                 return_state = kwargs.pop("return_state", None)
-                state: prefect.State = flow_or_task(*args, return_state=True, **kwargs)
+                state: prefect.State = flow(*args, return_state=True, **kwargs)
                 notification_block: AppriseNotificationBlock = block_type.load(
                     block_name
                 )

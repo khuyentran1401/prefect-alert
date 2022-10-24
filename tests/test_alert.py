@@ -13,7 +13,7 @@ def create_block(block_type, block_name):
 
 
 class TestAlertFlow:
-    def test_alert_on_failure_sync_success(self):
+    def test_sync_success(self):
         with patch("prefect.blocks.notifications.SlackWebhook") as SlackWebhookMock:
             block_type = SlackWebhookMock
             block_name = "test"
@@ -27,7 +27,7 @@ class TestAlertFlow:
             succeed_flow()
             block_type.load.assert_called_once_with(block_name)
 
-    def test_alert_on_failure_async_success(self):
+    def test_async_success(self):
         with patch("prefect.blocks.notifications.SlackWebhook") as SlackWebhookMock:
             block_type = SlackWebhookMock
             block_name = "test"
@@ -48,7 +48,7 @@ class TestAlertFlow:
             block_type.load.assert_called_once_with(block_name)
             assert isinstance(state, prefect.client.schemas.State)
 
-    def test_alert_on_failure_sync_failed(self):
+    def test_sync_failed(self):
         with patch("prefect.blocks.notifications.SlackWebhook") as SlackWebhookMock:
             block_type = SlackWebhookMock
             block_name = "test"
@@ -70,7 +70,7 @@ class TestAlertFlow:
             block_type.load.assert_called_once_with(block_name)
             block_instance.notify.assert_called_once()
 
-    def test_alert_on_failure_async_failed(self):
+    def test_async_failed(self):
         with patch("prefect.blocks.notifications.SlackWebhook") as SlackWebhookMock:
             block_type = SlackWebhookMock
             block_name = "test"
@@ -107,88 +107,24 @@ class TestAlertFlow:
             res = succeed_flow()
             assert isinstance(res, int)
 
-
-class TestAlertTask:
-    def test_alert_on_failure_sync_success(self):
-        with patch("prefect.blocks.notifications.SlackWebhook") as SlackWebhookMock:
-            block_type = SlackWebhookMock
-            block_name = "test"
-            create_block(block_type, block_name)
-
-            @alert_on_failure(block_type=SlackWebhookMock, block_name=block_name)
-            @task
-            def succeed_task():
-                return 1
-
-            @flow
-            def succeed_flow():
-                succeed_task()
-
-            succeed_flow()
-            block_type.load.assert_called_once_with(block_name)
-
-    def test_alert_on_failure_async_success(self):
-        with patch("prefect.blocks.notifications.SlackWebhook") as SlackWebhookMock:
-            block_type = SlackWebhookMock
-            block_name = "test"
-            SlackWebhookMock.load = AsyncMock()
-            create_block(block_type, block_name)
-
-            @alert_on_failure(block_type=SlackWebhookMock, block_name=block_name)
-            @task
-            async def success_task():
-                return 1
-
-            @flow
-            async def succeed_flow():
-                res = await success_task()
-                return res
-
-            state = asyncio.run(succeed_flow(return_state=True))
-            block_type.load.assert_called_once_with(block_name)
-            assert isinstance(state, prefect.client.schemas.State)
-
-    def test_alert_on_failure_sync_failed(self):
+    def test_sync_failed_submit(self):
         with patch("prefect.blocks.notifications.SlackWebhook") as SlackWebhookMock:
             block_type = SlackWebhookMock
             block_name = "test"
             block_instance = SlackWebhookMock.load.return_value
             create_block(block_type, block_name)
 
-            @alert_on_failure(block_type=SlackWebhookMock, block_name=block_name)
             @task
             def may_fail():
                 raise ValueError()
 
+            @alert_on_failure(block_type=SlackWebhookMock, block_name=block_name)
             @flow
             def failed_flow():
-                res = may_fail()
+                res = may_fail.submit()
                 return res
 
             state = failed_flow(return_state=True)
-            assert isinstance(state, prefect.client.schemas.State)
-            block_type.load.assert_called_once_with(block_name)
-            block_instance.notify.assert_called_once()
-
-    def test_alert_on_failure_async_failed(self):
-        with patch("prefect.blocks.notifications.SlackWebhook") as SlackWebhookMock:
-            block_type = SlackWebhookMock
-            block_name = "test"
-            SlackWebhookMock.load = AsyncMock()
-            block_instance = SlackWebhookMock.load.return_value
-            create_block(block_type, block_name)
-
-            @alert_on_failure(block_type=SlackWebhookMock, block_name=block_name)
-            @task
-            async def may_fail():
-                raise ValueError()
-
-            @flow
-            async def failed_flow():
-                res = await may_fail()
-                return res
-
-            state = asyncio.run(failed_flow(return_state=True))
             assert isinstance(state, prefect.client.schemas.State)
             block_type.load.assert_called_once_with(block_name)
             block_instance.notify.assert_called_once()

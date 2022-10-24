@@ -20,7 +20,7 @@
 
 [Prefect](https://www.prefect.io/) is an open-source library that allows you to orchestrate and observe your dataflow defined in Python.
 
-prefect-alert is a decorator that allows you to send alert when a Prefect task or flow fails.
+prefect-alert is a decorator that allows you to send alert when a Prefect flow fails.
 
 Read [this article](https://medium.com/the-prefect-blog/sending-slack-notifications-in-python-with-prefect-840a895f81c?sk=ab9bba5b59c8f3468bb01cabe04b2953) if you are not familiar with how to send notifications with Prefect. 
 
@@ -32,7 +32,7 @@ Requires an installation of Python 3.8+.
 
 We recommend using a Python virtual environment manager such as pipenv, conda or virtualenv.
 
-These tasks are designed to work with Prefect 2.0. For more information about how to use Prefect, please refer to the [Prefect documentation](https://orion-docs.prefect.io/).
+The decorator is designed to work with Prefect 2.0. For more information about how to use Prefect, please refer to the [Prefect documentation](https://orion-docs.prefect.io/).
 
 ### Installation
 
@@ -52,7 +52,7 @@ from prefect.blocks.notifications import SlackWebhook
 slack_block = SlackWebhook(url="https://hooks.slack.com/services/XXX/XXX/XXX")
 ``` 
 ### Send an alert
-Next, use the block created and the decorator `prefect_alert.alert_on_failure` to send alert when a flow/task fails.
+Next, use the block created and the decorator `prefect_alert.alert_on_failure` to send alert when a flow fails.
 #### Send an alert when a flow fails
 
 ```python
@@ -75,26 +75,6 @@ if __name__=="__main__":
 ```
 And you will see something like this on your Slack:
 ![](img/slack-notification.png)
-#### Send an alert when a task fails
-
-```python
-from prefect import flow, task 
-from prefect.blocks.notifications import SlackWebhook
-from prefect_alert import alert_on_failure
-
-@alert_on_failure(block_type=SlackWebhook, block_name="test")
-@task
-def may_fail():
-    raise ValueError()
-
-@flow
-def failed_flow():
-    res = may_fail()
-    return res
-
-if __name__=="__main__":
-    failed_flow()
-```
 
 #### Send an alert when a asynchronous flow fails
 
@@ -104,11 +84,11 @@ from prefect.blocks.notifications import SlackWebhook
 from prefect_alert import alert_on_failure
 import asyncio
 
-@alert_on_failure(block_type=SlackWebhook, block_name="test")
 @task
 async def may_fail():
     raise ValueError()
 
+@alert_on_failure(block_type=SlackWebhook, block_name="test")
 @flow
 async def failed_flow():
     res = await may_fail()
