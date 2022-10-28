@@ -5,7 +5,7 @@ import prefect
 from prefect.blocks.notifications import AppriseNotificationBlock
 from prefect.utilities.asyncutils import is_async_fn
 
-from prefect_alert.utilities import _get_alert_message
+from prefect_alert.utilities import WrappedFlow, _get_alert_message
 
 
 def alert_on_failure(block_type: AppriseNotificationBlock, block_name: str):
@@ -60,7 +60,7 @@ def alert_on_failure(block_type: AppriseNotificationBlock, block_name: str):
                 else:
                     return state.result()
 
-            return wrapper
+            return WrappedFlow(wrapper)
         else:
 
             @wraps(flow)
@@ -79,6 +79,6 @@ def alert_on_failure(block_type: AppriseNotificationBlock, block_name: str):
                 else:
                     return state.result()
 
-            return wrapper
+            return WrappedFlow(wrapper)
 
     return decorator
