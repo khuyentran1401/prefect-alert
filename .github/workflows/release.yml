@@ -4,13 +4,15 @@ on:
   push:
     branches:
       - master
+    tags:
+      - "v*"
   pull_request:
     branches:
       - master
     tags:
       - "v*"
   release:
-    types: [published]
+    types: [created]
 jobs:
   build-release:
     name: Build Release
