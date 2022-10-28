@@ -128,3 +128,20 @@ class TestAlertFlow:
             assert isinstance(state, prefect.client.schemas.State)
             block_type.load.assert_called_once_with(block_name)
             block_instance.notify.assert_called_once()
+
+    def test_is_flow_instance(self):
+        with patch("prefect.blocks.notifications.SlackWebhook") as SlackWebhookMock:
+            # the decorated flow should be an instance of prefect.Flow
+            # to ensure it works with deployments
+            @alert_on_failure(block_type=SlackWebhookMock, block_name="test")
+            @flow
+            def test_flow():
+                print("testing")
+
+            @alert_on_failure(block_type=SlackWebhookMock, block_name="test")
+            @flow
+            def test_async_flow():
+                print("testing async")
+
+            assert isinstance(test_flow, prefect.Flow)
+            assert isinstance(test_async_flow, prefect.Flow)
