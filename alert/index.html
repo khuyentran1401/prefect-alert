@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://khuyentran1401.github.io/prefect-alert/alert/">
       
       <link rel="icon" href="../img/favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.6">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.7">
     
     
       
@@ -262,6 +262,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#prefect_alert.alert-classes" class="md-nav__link">
+    Classes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#prefect_alert.alert-functions" class="md-nav__link">
     Functions
   </a>
@@ -314,6 +321,13 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prefect_alert.alert-classes" class="md-nav__link">
+    Classes
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#prefect_alert.alert-functions" class="md-nav__link">
@@ -378,7 +392,7 @@
 
 
 
-
+<h2 id="prefect_alert.alert-classes">Classes</h2>
 <h2 id="prefect_alert.alert-functions">Functions</h2>
 
 <div class="doc doc-object doc-function">
@@ -452,8 +466,7 @@
 
       <details class="quote">
         <summary>Source code in <code>prefect_alert/alert.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">10</span>
-<span class="normal">11</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">11</span>
 <span class="normal">12</span>
 <span class="normal">13</span>
 <span class="normal">14</span>
@@ -558,47 +571,46 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">flow_or_task</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">prefect</span><span class="o">.</span><span class="n">Flow</span><span class="p">,</span> <span class="n">prefect</span><span class="o">.</span><span class="n">Task</span><span class="p">]):</span>
-        <span class="k">if</span> <span class="n">is_async_fn</span><span class="p">(</span><span class="n">flow_or_task</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">flow</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_async_fn</span><span class="p">(</span><span class="n">flow</span><span class="p">):</span>
 
-            <span class="nd">@wraps</span><span class="p">(</span><span class="n">flow_or_task</span><span class="p">)</span>
+            <span class="nd">@wraps</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span>
             <span class="k">async</span> <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="sd">&quot;&quot;&quot;A wrapper of an async task/flow&quot;&quot;&quot;</span>
                 <span class="n">return_state</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;return_state&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="n">state</span><span class="p">:</span> <span class="n">prefect</span><span class="o">.</span><span class="n">State</span> <span class="o">=</span> <span class="k">await</span> <span class="n">flow_or_task</span><span class="p">(</span>
-                    <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">return_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-                <span class="p">)</span>
+                <span class="n">state</span><span class="p">:</span> <span class="n">prefect</span><span class="o">.</span><span class="n">State</span> <span class="o">=</span> <span class="k">await</span> <span class="n">flow</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">return_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
                 <span class="n">notification_block</span><span class="p">:</span> <span class="n">AppriseNotificationBlock</span> <span class="o">=</span> <span class="k">await</span> <span class="n">block_type</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
                     <span class="n">block_name</span>
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">is_failed</span><span class="p">():</span>
-                    <span class="k">await</span> <span class="n">notification_block</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span>
-                        <span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Failed run ...&quot;</span>
-                    <span class="p">)</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="n">_get_alert_message</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">flow</span><span class="p">)</span>
+                    <span class="k">await</span> <span class="n">notification_block</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Flow failed...&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">return_state</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">state</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 
-            <span class="k">return</span> <span class="n">wrapper</span>
+            <span class="k">return</span> <span class="n">WrappedFlow</span><span class="p">(</span><span class="n">wrapper</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
 
-            <span class="nd">@wraps</span><span class="p">(</span><span class="n">flow_or_task</span><span class="p">)</span>
+            <span class="nd">@wraps</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span>
             <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="sd">&quot;&quot;&quot;A wrapper of a sync task/flow&quot;&quot;&quot;</span>
                 <span class="n">return_state</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;return_state&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="n">state</span><span class="p">:</span> <span class="n">prefect</span><span class="o">.</span><span class="n">State</span> <span class="o">=</span> <span class="n">flow_or_task</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">return_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">state</span><span class="p">:</span> <span class="n">prefect</span><span class="o">.</span><span class="n">State</span> <span class="o">=</span> <span class="n">flow</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">return_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="n">notification_block</span><span class="p">:</span> <span class="n">AppriseNotificationBlock</span> <span class="o">=</span> <span class="n">block_type</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
                     <span class="n">block_name</span>
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">is_failed</span><span class="p">():</span>
-                    <span class="n">notification_block</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Failed run ...&quot;</span><span class="p">)</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="n">_get_alert_message</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">flow</span><span class="p">)</span>
+                    <span class="n">notification_block</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Flow failed...&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">return_state</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">state</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 
-            <span class="k">return</span> <span class="n">wrapper</span>
+            <span class="k">return</span> <span class="n">WrappedFlow</span><span class="p">(</span><span class="n">wrapper</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">decorator</span>
 </code></pre></div></td></tr></table></div>
@@ -672,10 +684,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.078830c0.min.js"></script>
+      <script src="../assets/javascripts/bundle.8492ddcf.min.js"></script>
       
     
   </body>

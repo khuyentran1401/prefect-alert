@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://khuyentran1401.github.io/prefect-alert/">
       
       <link rel="icon" href="img/favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.6">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.7">
     
     
       
@@ -298,13 +298,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#send-an-alert-when-a-task-fails" class="md-nav__link">
-    Send an alert when a task fails
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#send-an-alert-when-a-asynchronous-flow-fails" class="md-nav__link">
     Send an alert when a asynchronous flow fails
   </a>
@@ -436,13 +429,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#send-an-alert-when-a-task-fails" class="md-nav__link">
-    Send an alert when a task fails
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#send-an-alert-when-a-asynchronous-flow-fails" class="md-nav__link">
     Send an alert when a asynchronous flow fails
   </a>
@@ -497,13 +483,6 @@
 <p align="center">
     <a href="https://pypi.python.org/pypi/prefect-alert/" alt="PyPI version">
         <img alt="PyPI" src="https://img.shields.io/pypi/v/prefect-alert?color=0052FF&labelColor=090422"></a>
-    <a href="https://github.com/khuyentran1401/prefect-alert/" alt="Stars">
-        <img src="https://img.shields.io/github/stars/khuyentran1401/prefect-alert?color=0052FF&labelColor=090422" /></a>
-    <a href="https://pepy.tech/badge/prefect-alert/" alt="Downloads">
-        <img src="https://img.shields.io/pypi/dm/prefect-alert?color=0052FF&labelColor=090422" /></a>
-    <a href="https://github.com/khuyentran1401/prefect-alert/pulse" alt="Activity">
-        <img src="https://img.shields.io/github/commit-activity/m/khuyentran1401/prefect-alert?color=0052FF&labelColor=090422" /></a>
-    <br>
     <a href="https://prefect-community.slack.com" alt="Slack">
         <img src="https://img.shields.io/badge/slack-join_community-red.svg?color=0052FF&labelColor=090422&logo=slack" /></a>
     <a href="https://discourse.prefect.io/" alt="Discourse">
@@ -512,13 +491,13 @@
 
 <h2 id="welcome">Welcome!</h2>
 <p><a href="https://www.prefect.io/">Prefect</a> is an open-source library that allows you to orchestrate and observe your dataflow defined in Python.</p>
-<p>prefect-alert is a decorator that allows you to send alert when a Prefect task or flow fails.</p>
+<p>prefect-alert is a decorator that allows you to send alert when a Prefect flow fails.</p>
 <p>Read <a href="https://medium.com/the-prefect-blog/sending-slack-notifications-in-python-with-prefect-840a895f81c?sk=ab9bba5b59c8f3468bb01cabe04b2953">this article</a> if you are not familiar with how to send notifications with Prefect. </p>
 <h2 id="getting-started">Getting Started</h2>
 <h3 id="python-setup">Python setup</h3>
 <p>Requires an installation of Python 3.8+.</p>
 <p>We recommend using a Python virtual environment manager such as pipenv, conda or virtualenv.</p>
-<p>These tasks are designed to work with Prefect 2.0. For more information about how to use Prefect, please refer to the <a href="https://orion-docs.prefect.io/">Prefect documentation</a>.</p>
+<p>The decorator is designed to work with Prefect 2.0. For more information about how to use Prefect, please refer to the <a href="https://orion-docs.prefect.io/">Prefect documentation</a>.</p>
 <h3 id="installation">Installation</h3>
 <p>Install <code>prefect-alert</code> with <code>pip</code>:</p>
 <div class="highlight"><pre><span></span><code>pip install prefect-alert
@@ -531,7 +510,7 @@
 <span class="n">slack_block</span> <span class="o">=</span> <span class="n">SlackWebhook</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://hooks.slack.com/services/XXX/XXX/XXX&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="send-an-alert">Send an alert</h3>
-<p>Next, use the block created and the decorator <code>prefect_alert.alert_on_failure</code> to send alert when a flow/task fails.</p>
+<p>Next, use the block created and the decorator <code>prefect_alert.alert_on_failure</code> to send alert when a flow fails.</p>
 <h4 id="send-an-alert-when-a-flow-fails">Send an alert when a flow fails</h4>
 <p><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">prefect</span> <span class="kn">import</span> <span class="n">flow</span><span class="p">,</span> <span class="n">task</span> 
 <span class="kn">from</span> <span class="nn">prefect.blocks.notifications</span> <span class="kn">import</span> <span class="n">SlackWebhook</span>
@@ -552,35 +531,17 @@
 </code></pre></div>
 And you will see something like this on your Slack:
 <img alt="" src="img/slack-notification.png" /></p>
-<h4 id="send-an-alert-when-a-task-fails">Send an alert when a task fails</h4>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">prefect</span> <span class="kn">import</span> <span class="n">flow</span><span class="p">,</span> <span class="n">task</span> 
-<span class="kn">from</span> <span class="nn">prefect.blocks.notifications</span> <span class="kn">import</span> <span class="n">SlackWebhook</span>
-<span class="kn">from</span> <span class="nn">prefect_alert</span> <span class="kn">import</span> <span class="n">alert_on_failure</span>
-
-<span class="nd">@alert_on_failure</span><span class="p">(</span><span class="n">block_type</span><span class="o">=</span><span class="n">SlackWebhook</span><span class="p">,</span> <span class="n">block_name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
-<span class="nd">@task</span>
-<span class="k">def</span> <span class="nf">may_fail</span><span class="p">():</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
-
-<span class="nd">@flow</span>
-<span class="k">def</span> <span class="nf">failed_flow</span><span class="p">():</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">may_fail</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">res</span>
-
-<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">failed_flow</span><span class="p">()</span>
-</code></pre></div>
 <h4 id="send-an-alert-when-a-asynchronous-flow-fails">Send an alert when a asynchronous flow fails</h4>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">prefect</span> <span class="kn">import</span> <span class="n">flow</span><span class="p">,</span> <span class="n">task</span> 
 <span class="kn">from</span> <span class="nn">prefect.blocks.notifications</span> <span class="kn">import</span> <span class="n">SlackWebhook</span>
 <span class="kn">from</span> <span class="nn">prefect_alert</span> <span class="kn">import</span> <span class="n">alert_on_failure</span>
 <span class="kn">import</span> <span class="nn">asyncio</span>
 
-<span class="nd">@alert_on_failure</span><span class="p">(</span><span class="n">block_type</span><span class="o">=</span><span class="n">SlackWebhook</span><span class="p">,</span> <span class="n">block_name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
 <span class="nd">@task</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">may_fail</span><span class="p">():</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
 
+<span class="nd">@alert_on_failure</span><span class="p">(</span><span class="n">block_type</span><span class="o">=</span><span class="n">SlackWebhook</span><span class="p">,</span> <span class="n">block_name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
 <span class="nd">@flow</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">failed_flow</span><span class="p">():</span>
     <span class="n">res</span> <span class="o">=</span> <span class="k">await</span> <span class="n">may_fail</span><span class="p">()</span>
@@ -662,10 +623,10 @@ pre-commit install
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.078830c0.min.js"></script>
+      <script src="assets/javascripts/bundle.8492ddcf.min.js"></script>
       
     
   </body>
