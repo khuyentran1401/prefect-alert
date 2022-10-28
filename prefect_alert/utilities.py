@@ -30,10 +30,12 @@ def _get_alert_message(state: prefect.State, flow: prefect.Flow):
 
 
 class WrappedFlow(prefect.Flow):
+    """Updates the wrapper function to a Prefect flow"""
+
     def __init__(self, wrapper):
         if type(wrapper.__wrapped__) != prefect.Flow:
             raise RuntimeError("This class can only wrap Prefect flows.")
-            
+
         self.wrapper = wrapper
         update_wrapper(self, wrapper.__wrapped__)
 
