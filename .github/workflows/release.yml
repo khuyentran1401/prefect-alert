@@ -1,18 +1,10 @@
 name: Build & Release
 
 on:
-  push:
-    branches:
-      - master
-    tags:
-      - "v*"
   pull_request:
-    branches:
-      - master
     tags:
       - "v*"
-  release:
-    types: [published]
+
 jobs:
   build-release:
     name: Build Release
