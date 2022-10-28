@@ -12,7 +12,7 @@ on:
     tags:
       - "v*"
   release:
-    types: [created]
+    types: [published]
 jobs:
   build-release:
     name: Build Release
