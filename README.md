@@ -43,6 +43,7 @@ First, start with creating a [notification block](https://docs.prefect.io/api-re
 from prefect.blocks.notifications import SlackWebhook
 
 slack_block = SlackWebhook(url="https://hooks.slack.com/services/XXX/XXX/XXX")
+slack_block.save(name="test")
 ``` 
 ### Send an alert
 Next, use the block created and the decorator `prefect_alert.alert_on_failure` to send alert when a flow fails.
