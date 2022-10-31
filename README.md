@@ -18,7 +18,6 @@ prefect-alert is a decorator that allows you to send alert when a Prefect flow f
 Read [this article](https://medium.com/the-prefect-blog/sending-slack-notifications-in-python-with-prefect-840a895f81c?sk=ab9bba5b59c8f3468bb01cabe04b2953) if you are not familiar with how to send notifications with Prefect. 
 
 ## Getting Started
-
 ### Python setup
 
 Requires an installation of Python 3.8+.
