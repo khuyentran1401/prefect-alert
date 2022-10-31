@@ -1,7 +1,12 @@
 name: Publish docs
 
 on:
-  workflow_dispatch
+  push:
+    branches: 
+      - master 
+    paths: 
+      - README.md
+  workflow_dispatch:
 
 jobs:
   build-and-publish-docs:
