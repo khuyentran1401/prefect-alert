@@ -298,8 +298,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#send-an-alert-when-a-asynchronous-flow-fails" class="md-nav__link">
-    Send an alert when a asynchronous flow fails
+  <a href="#send-an-alert-when-an-asynchronous-flow-fails" class="md-nav__link">
+    Send an alert when an asynchronous flow fails
   </a>
   
 </li>
@@ -429,8 +429,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#send-an-alert-when-a-asynchronous-flow-fails" class="md-nav__link">
-    Send an alert when a asynchronous flow fails
+  <a href="#send-an-alert-when-an-asynchronous-flow-fails" class="md-nav__link">
+    Send an alert when an asynchronous flow fails
   </a>
   
 </li>
@@ -508,6 +508,7 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">prefect.blocks.notifications</span> <span class="kn">import</span> <span class="n">SlackWebhook</span>
 
 <span class="n">slack_block</span> <span class="o">=</span> <span class="n">SlackWebhook</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://hooks.slack.com/services/XXX/XXX/XXX&quot;</span><span class="p">)</span>
+<span class="n">slack_block</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="send-an-alert">Send an alert</h3>
 <p>Next, use the block created and the decorator <code>prefect_alert.alert_on_failure</code> to send alert when a flow fails.</p>
@@ -531,7 +532,7 @@
 </code></pre></div>
 And you will see something like this on your Slack:
 <img alt="" src="img/slack-notification.png" /></p>
-<h4 id="send-an-alert-when-a-asynchronous-flow-fails">Send an alert when a asynchronous flow fails</h4>
+<h4 id="send-an-alert-when-an-asynchronous-flow-fails">Send an alert when an asynchronous flow fails</h4>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">prefect</span> <span class="kn">import</span> <span class="n">flow</span><span class="p">,</span> <span class="n">task</span> 
 <span class="kn">from</span> <span class="nn">prefect.blocks.notifications</span> <span class="kn">import</span> <span class="n">SlackWebhook</span>
 <span class="kn">from</span> <span class="nn">prefect_alert</span> <span class="kn">import</span> <span class="n">alert_on_failure</span>
