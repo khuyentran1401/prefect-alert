@@ -69,7 +69,7 @@ if __name__=="__main__":
 And you will see something like this on your Slack:
 ![](img/slack-notification.png)
 
-#### Send an alert when a asynchronous flow fails
+#### Send an alert when an asynchronous flow fails
 
 ```python
 from prefect import flow, task 
