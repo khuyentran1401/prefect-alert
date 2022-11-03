@@ -7,17 +7,11 @@ from prefect import flow, task
 from prefect_alert import alert_on_failure
 
 
-def create_block(block_type, block_name):
-    block = block_type(url="https://example.com/notification")
-    block.save(name=block_name, overwrite=True)
-
-
 class TestAlertFlow:
     def test_sync_success(self):
         with patch("prefect.blocks.notifications.SlackWebhook") as SlackWebhookMock:
             block_type = SlackWebhookMock
             block_name = "test"
-            create_block(block_type, block_name)
 
             @alert_on_failure(block_type=SlackWebhookMock, block_name=block_name)
             @flow
@@ -32,7 +26,6 @@ class TestAlertFlow:
             block_type = SlackWebhookMock
             block_name = "test"
             SlackWebhookMock.load = AsyncMock()
-            create_block(block_type, block_name)
 
             @task
             async def success_task():
@@ -53,7 +46,6 @@ class TestAlertFlow:
             block_type = SlackWebhookMock
             block_name = "test"
             block_instance = SlackWebhookMock.load.return_value
-            create_block(block_type, block_name)
 
             @task
             def may_fail():
@@ -76,7 +68,6 @@ class TestAlertFlow:
             block_name = "test"
             SlackWebhookMock.load = AsyncMock()
             block_instance = SlackWebhookMock.load.return_value
-            create_block(block_type, block_name)
 
             @task
             async def may_fail():
@@ -95,9 +86,7 @@ class TestAlertFlow:
 
     def test_return_results(self):
         with patch("prefect.blocks.notifications.SlackWebhook") as SlackWebhookMock:
-            block_type = SlackWebhookMock
             block_name = "test"
-            create_block(block_type, block_name)
 
             @alert_on_failure(block_type=SlackWebhookMock, block_name=block_name)
             @flow
@@ -112,7 +101,6 @@ class TestAlertFlow:
             block_type = SlackWebhookMock
             block_name = "test"
             block_instance = SlackWebhookMock.load.return_value
-            create_block(block_type, block_name)
 
             @task
             def may_fail():
