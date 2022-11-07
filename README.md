@@ -13,7 +13,7 @@
 
 [Prefect](https://www.prefect.io/) is an open-source library that allows you to orchestrate and observe your dataflow defined in Python.
 
-prefect-alert is a decorator that allows you to send alert when a Prefect flow fails.
+prefect-alert is a decorator that allows you to send an alert when a Prefect flow fails.
 
 Read [this article](https://medium.com/the-prefect-blog/sending-slack-notifications-in-python-with-prefect-840a895f81c?sk=ab9bba5b59c8f3468bb01cabe04b2953) if you are not familiar with how to send notifications with Prefect. 
 
@@ -24,7 +24,7 @@ Requires an installation of Python 3.8+.
 
 We recommend using a Python virtual environment manager such as pipenv, conda or virtualenv.
 
-The decorator is designed to work with Prefect 2.0. For more information about how to use Prefect, please refer to the [Prefect documentation](https://orion-docs.prefect.io/).
+The decorator is designed to work with Prefect 2. For more information about how to use Prefect, please refer to the [Prefect documentation](https://orion-docs.prefect.io/).
 
 ### Installation
 
